@@ -1,0 +1,81 @@
+# Apresentação do Cardápio com o nome do Aluno 
+print('+'*6,'Bem vindos a loja de marmitas de Daniele de G.P.B.Puppin','+'*6)
+print('+'*30,'Cardápio','+'*30)
+print('+'*70)
+print('+'*3,'|','  Tamanho ','|',' Bife Acebolado (BA) ','|',' Filé de Frango (FF) ','|','+'*3)
+print('+'*3,'|','   P      ','|','   R$16.00           ','|','   R$15.00           ','|','+'*3)
+print('+'*3,'|','   M      ','|','   R$18.00           ','|','   R$17.00           ','|','+'*3)
+print('+'*3,'|','   G      ','|','   R$22.00           ','|','   R$21.00           ','|','+'*3)
+print('+'*3,'|', ' Digite "S" para sair e concluir o pedido                 ','|','+'*3 )
+print('+'*70)
+#Definindo variável acumuladora 
+total = 0
+#Utilizando o Laço de Repetição
+while True:
+#Permitindo a escolha do sabor 
+ op = input('Digite o sabor desejado: ')
+ #Utilizando a Estrutura Condicional do sabor 
+ if (op == 'BA'):
+  tamanho = input('Digite o tamanho desejado: ')
+  #Utilizando a Estrutura Condicional do tamanho 
+  if (tamanho == 'P'):
+    print('Você pediu um Bife Acebolado de Tamanho P:R$16,00')
+    #Definindo variável a ser utiliada no cálculo da variável acumuladora
+    qtd = int(input('Quantas unidades?'))
+    #Utilizando variável acumuladora 
+    total = total + (qtd*16)
+  #Utilizando a Estrutura Condicional do tamanho 
+  elif (tamanho == 'M'):
+    print('Você pediu um Bife Acebolado de Tamanho M:R$18,00')
+    qtd = int(input('Quantas unidades?'))
+    #Utilizando variável acumuladora
+    total = total + (qtd*18)
+  #Utilizando a Estrutura Condicional do tamanho
+  elif (tamanho == 'G'):
+    print('Você pediu um Bife Acebolado de Tamanho G:R$22,00')
+    #Definindo variável a ser utilizada no cálculo da variável acumuladora
+    qtd = int(input('Quantas unidades?'))
+    #Utilizando variável acumuladora
+    total = total + (qtd*22)
+  #Permitindo com o erro de digitação continuar o pedido. 
+  else:
+    print('Tamanho não disponível. Tente novamente')
+    continue
+  #Utilizando a Estrutura Condicional do sabor
+ elif (op == 'FF'):
+  tamanho = input('Digite o tamanho desejado: ')
+  #Utilizando a Estrutura condicional do tamanho 
+  if(tamanho == 'P'):
+    print('Você pediu um Filé de Frango de Tamanho P:R$15,00')
+    qtd = int(input('Quantas unidades?'))
+    #Utilizando variável acumuladora
+    total = total + (qtd*15)
+  #Utilizando a Estrutura condicional do tamanho
+  elif (tamanho == 'M'):
+    print('Você pediu um Filé de Frango de Tamanho M:R$17,00')
+    qtd = int(input('Quantas unidades?'))
+    #Utilizando variável acumuladora
+    total = total + (qtd*17)
+  #Utilizando a Estrutura condicional do tamanho 
+  elif (tamanho == 'G'):
+    print('Você pediu um Filé de Frango de Tamanho G:R$21,00')
+    #Definindo variável a ser utilizada no cálculo da variável acumuladora
+    qtd = int(input('Quantas unidades?'))
+    #Utilizando variável acumuladora
+    total = total + (qtd*21)
+  #Permitindo com o erro de digitação continuar o pedido 
+  else:
+     print('Tamanho não disponível. Tente novamente')
+     continue
+  # Encerrando o pedido 
+ elif (op == 'S'):
+  print('Obrigado por comprar conosco!')
+  break
+ #Permitindo com o erro de digitação continuar o pedido                        
+ else:
+  print('Sabor não disponível. Tente novamente')
+  continue
+
+#Imprimindo o total do pedido  
+print(f'O valor total do pedido é R${total:.2f}')
+
