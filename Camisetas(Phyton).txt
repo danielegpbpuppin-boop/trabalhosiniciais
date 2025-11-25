@@ -1,0 +1,91 @@
+#definição da função "escolha_modelo"
+def escolha_modelo():
+  #apresentação do menu do "modelo"
+    print('Entre com o modelo desejado')
+    print('MCS - Manga Curta Simples')
+    print('MLS - Manga Longa Simples')
+    print('MCE - Manga Curta Com Estampa')
+    print('MLE - Manga Longa Com Estampa')
+   #definição da variável "modelo"
+    modelo = input().strip()
+    #definição da variável "preço" com o laço de repetição "while"
+    while True:
+        if modelo == 'MCS':
+            preço = 1.80
+            break #parando a função
+        elif modelo == 'MLS':
+            preço = 2.10
+            break #parando a função
+        elif modelo == 'MCE':
+            preço = 2.90
+            break #parando a função
+        elif modelo == 'MLE':
+            preço = 3.20
+            break #parando a função
+        else:
+            print('Modelo não encontrado. Tente novamente.')
+            modelo = input().strip() #continuando a função 
+    #encerrando a função em execução e retornando para variável "preço"
+    return preço
+#definição da função "num_camiseta"
+def num_camiseta():
+    #definição da variável "desconto" com o laço de repetição "while" utilizando a função "try/execpt" para tratar das exceções 
+    while True:
+        try:
+            #definição da variável "numecamiseta"
+            numecamiseta = int(input('Entre com o número de camisetas: '))
+            if numecamiseta < 20:
+                desconto = 0
+            elif numecamiseta < 200:
+                desconto = 0.05
+            elif numecamiseta < 2000:
+                desconto = 0.07
+            elif numecamiseta < 20000:
+                desconto = 0.12
+            else:
+                print('Ultrapassou o número máximo permitido.')
+                continue #continuando a função
+            break #parando a função  
+        #exceção para valores não numéricos 
+        except ValueError:
+            print('Esse não é um valor numérico! Tente novamente.')
+    #encerrando a função em execução e retornando para as variáveis "numecasmisetas" e "desconto"
+    return numecamiseta, desconto
+#definição da função de "frete"
+def frete():
+  #apresentação da função do frete 
+    print('Escolha o tipo de frete')
+    print('1 - Frete por transportadora - R$100,00')
+    print('2 - Frete por Sedex - R$200,00')
+    print('0 - Retirar o pedido na fábrica - R$0')
+    #definição da variável "afrete" com o laço de repetição "while"
+    while True:
+        try:
+            tipo_frete = int(input(''))
+            if tipo_frete == 1:
+                afrete = 100
+                break #parando a função
+            elif tipo_frete == 2:
+                afrete = 200
+                break #parando a função 
+            elif tipo_frete == 0:
+                afrete = 0
+                break #parando a função 
+            else:
+                print('Frete não encontrado. Tente novamente.') #continuando a função 
+        except ValueError: #exceção para valores não numéricos
+            print('Escolha um número válido para o tipo de frete.')#continuando a função
+    return afrete #encerrando a função em execução e retornando para variável "afrete"
+# PROGRAMA PRINCIPAL com o nome do aluno 
+print('Bem-vindos à Fábrica de Camisetas de Daniele de G.P.B.Puppin')
+#definição da variável modelo e associação com a função escolha_modelo
+preço = escolha_modelo()
+#definição das variáveis numecamiseta e desconto e associação com a função num_camiseta
+numecamiseta, desconto = num_camiseta()
+#definição da variável afrete e associação com a função frete
+afrete = frete()
+#Cálculo principal dos valores 
+total = (preço * numecamiseta * (1 - desconto)) + afrete
+#Apresentação e impressão dos valores
+print(f'Total: R$ {total:.2f} (Modelo: R$ {preço:.2f} * Quantidade: {numecamiseta} com desconto: R$ {preço * numecamiseta * desconto:.2f} + frete: R$ {afrete:.2f})')
+
