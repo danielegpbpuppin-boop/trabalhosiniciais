@@ -1,0 +1,236 @@
+#include <stdio.h>//Contém funções para operações de entrada e saída
+#include <stdlib.h> //Contém funções de uso geral, como alocação de memória.
+#include <ctype.h> //Contém funções que testam e manipulam caracteres.	 
+
+// Variáveis globais para controle dos números sequenciais dos cartões
+int proximo_C = 1;
+int proximo_P = 301;
+
+ /* Estrutura para representar um No:  representação de um cartão enumerado contendo duas variáveis: numero (tipo inteiro) e prioridade (tipo char). E criação de um ponteiro que aponta para o próximo No. */
+typedef struct No {
+    int numero;
+    char prioridade; // 'C' para Comum, 'P' para Prioritário
+    struct No* proximo;
+} No;
+
+/* Criação de uma Cabeça da lista ligada, onde atribui-se o valor NULL para facilitar futura varredura*/
+
+No* head = NULL;
+
+/* Função para criar um novo nó e alocar memória para este e inicializar seus campos */
+
+No* criarNo(char p, int n) {
+    No* novoNo = (No*)malloc(sizeof(No));
+    if (novoNo == NULL) {
+        printf("Erro de alocação de memória!\n");
+        exit(EXIT_FAILURE); // Sai do programa se a alocação falhar
+
+    }
+    novoNo->prioridade = p; // Atribui p como Prioritário para o novo nó
+    novoNo->numero = n; // Atribui c como Comum para o novo nó
+    novoNo->proximo = NULL; // Inicializa o ponteiro 'proximo' como nulo
+    return novoNo; // Retorna o ponteiro para o novo nó criado
+}
+
+/* Função para adicionar clientes comuns(‘c’) ou sem prioridade em ordem numérica crescente */
+
+void inserirSemPrioridade(No* novoNo) {
+  // Se a lista estiver vazia, o novo nó se torna o primeiro da lista (cabeça). 
+if (head == NULL) {
+        head = novoNo;
+    } else {
+/*Se a lista não estiver vazia, precisamos encontrar o último nó. Então, cria-se um ponteiro auxiliar para percorrer a lista, começando da cabeça. */
+        No* atual = head;
+/*Laço de repetição que percorre a lista até o último nó. Sendo o último nó é aquele cujo ponteiro 'proximo' é NULL. */
+   
+        while (atual->proximo != NULL) {
+// Avança para o próximo nó
+            atual = atual->proximo;
+        }
+/*Neste ponto, 'atual' é o último nó da lista. O ponteiro 'proximo' do último nó aponta para o novo nó, inserindo-o no final da lista. */
+
+        atual->proximo = novoNo;
+    }
+}
+
+/* Função para adicionar clientes prioritários (p) ou com prioridade em ordem crescente e para serem colocados antes dos clientes comuns (c) */
+
+void inserirComPrioridade(No* novoNo) {
+    No* atual = head; // Ponteiro para percorrer a lista, começa no início.
+    No* anterior = NULL; // Ponteiro para manter o nó que precede 'atual'.
+
+/* No laço de repetição, o loop avança enquanto o nó ‘atual’ não for NULL (nulo) e a prioridade deste for ‘p’. A inserção deve ocorrer após o último nó ‘p’ e antes do primeiro nó ‘c’ */
+
+    while (atual != NULL && atual->prioridade == 'P') {
+        anterior = atual; // 'anterior' armazena o último 'P' encontrado.
+        atual = atual->proximo; // Avança para o próximo nó.
+    }
+
+
+/*O loop pode parar porque percorreu toda a lista. Todos os nós eram 'P' (ou a lista estava vazia).*/
+    if (anterior == NULL) {
+        novoNo->proximo = head; /*O próximo do novo nó é o antigo 'head' (ou NULL se estava vazia) */
+
+        head = novoNo; /*Atualiza o ponteiro 'head' para apontar para o 'novoNo' */
+
+    } 
+/*O loop pode parar porque encontrou o primeiro nó ‘c’.  Portanto insere entre o ‘anterior’ e o ‘atual’  */
+
+else {
+        novoNo->proximo = atual; /*O próximo do novo nó aponta para 'atual' (o primeiro 'C' ou NULL) */
+
+        anterior->proximo = novoNo; /* O próximo do nó 'anterior' aponta para o 'novoNo'. */
+    }
+}
+// Função de atribuição de Prioridade ao usuário da plataforma
+void inserir() {
+// Declaração de variáveis 
+    char prioridade;
+    int numero_atribuido;
+
+    // Definição de variáveis pelo usuário
+    printf("\nDigite a prioridade ('P' para Prioritario, 'C' para Comum): ");
+    if (scanf(" %c", &prioridade) != 1) {
+        // Limpa o buffer em caso de erro de leitura
+        while (getchar() != '\n');
+        printf("Entrada invalida. Tente novamente.\n");
+        return;
+    }
+    prioridade = toupper(prioridade); // Converte para maiúscula
+/* Se a prioridade for Comum, atribui o próximo número sequencial de Comuns. O 'proximo_C++' atribui o valor atual e DEPOIS incrementa a variável global/estática. numero_atribuido = proximo_C++ */
+    if (prioridade == 'C') {
+        numero_atribuido = proximo_C++;
+        printf("Cliente Comum (C) atribuido o numero: %03d\n", numero_atribuido);
+    } 
+/* Se a prioridade for Prioritária, atribui o próximo número sequencial de Prioritários. O 'proximo_P++' atribui o valor atual e DEPOIS incrementa a variável global/estática. numero_atribuido = proximo_P++*/
+
+else if (prioridade == 'P') {
+        numero_atribuido = proximo_P++;
+        printf("Cliente Prioritario (P) atribuido o numero: %d\n", numero_atribuido);
+    } 
+// Prioridade digitada não é 'P' nem 'C'.
+else {
+        printf("Prioridade invalida. Digite 'P' ou 'C'.\n");
+        return;
+    }
+
+
+ /*Cria o Nó : Chama uma função (criarNo) para alocar memória e inicializar. Um novo nó da lista com a prioridade e o número atribuído. */
+    No* novoNo = criarNo(prioridade, numero_atribuido);
+
+    // Lógica de inserção
+    if (head == NULL) {
+     /*Se a lista estiver vazia, a cabeça (head) da lista deve apontar para o no criado. */
+        head = novoNo;
+    } else if (prioridade == 'C') {
+     /* Se a prioridade do no for 'C', deve-se chamar a função inserirSemPrioridade. */
+
+        inserirSemPrioridade(novoNo);
+    } else if (prioridade == 'P') {
+        /*Se a prioridade do nodo for 'P', deve-se chamar a função inserirComPrioridade */
+        inserirComPrioridade(novoNo);
+    }
+}
+
+/* Função para imprimir todos os cartões e seus respectivos números a partir do primeiro até o último da lista, obedecendo a prioridade ‘p’ ou ‘c’.  */
+
+void imprimirFilaClientes() {
+// O ponteiro 'head' (cabeça da lista) ser NULL indica que a lista está vazia.
+    if (head == NULL) {
+        printf("\nA fila de clientes esta vazia.\n");
+        return; // Sai da função, pois não há nada para imprimir.
+    }
+
+    No* atual = head; // 'atual' é um ponteiro temporário que começa na cabeça da lista.
+    printf("\n--- Clientes na Fila (Por Ordem de Atendimento) ---\n");
+// O loop continua enquanto 'atual' não for NULL (ou seja, até chegar ao final da lista).
+    while (atual != NULL) {
+        printf("[%c%03d]", atual->prioridade, atual->numero);
+// Verifica se há um próximo nó na lista
+        if (atual->proximo != NULL) {
+// Se houver um próximo, imprime a seta para indicar a ligação.
+            printf(" -> ");
+        }
+// Avança para o próximo nó da lista.
+        atual = atual->proximo;
+    }
+    printf("\n----------------------------------------------------\n");
+}
+
+/* Função destinada a chamada do cliente obedecendo a ordem crescente e prioridade e a remoção do primeiro cliente da lista. */
+void atenderCliente() {
+    if (head == NULL) {
+        printf("\nA fila de clientes esta vazia. Ninguem para atender.\n");
+        return;
+    }
+
+    // O primeiro cliente a ser atendido
+    No* atendido = head;
+    
+    // O head aponta para o próximo (remoção do primeiro elemento)
+    head = head->proximo;
+
+    // Imprime a mensagem chamando o cliente
+    printf("\n==============================================\n");
+    printf("     CHAMADA: Cliente %c%03d, por favor, dirija-se ao guiche de atendimento.\n", 
+           atendido->prioridade, atendido->numero);
+    printf("==============================================\n");
+
+    // Libera a memória do nó removido
+    free(atendido);
+}
+
+/* Implementação do Menu Principal para a navegação da plataforma das Filas Prioritárias ou Comuns */
+
+int main() {
+    int opcao;
+        // Título do Menu
+    printf("--- Sistema de Fila de Atendimento do Banco ---\n");
+
+    do {
+        // Apresentação das diversas opções
+        printf("\nMenu:\n");
+        printf("1 - Adicionar cliente a fila\n");
+        printf("2 - Mostrar clientes na fila\n");
+        printf("3 - Chamar cliente para atendimento\n");
+        printf("4 - Sair\n");
+        printf("Escolha uma opcao: ");
+
+        if (scanf("%d", &opcao) != 1) {
+            // Se a leitura falhar (não for um número)
+            opcao = 0; // Atribui um valor inválido para cair no default
+            while (getchar() != '\n'); // Limpa o buffer de entrada
+        }
+
+        switch (opcao) {
+            case 1:
+                inserir(); // Chama a função inserir
+                break;
+            case 2:
+                imprimirFilaClientes(); // Chama a função imprimirFilaClientes
+                break;
+            case 3:
+                atenderCliente(); // Chama a função atenderCliente
+                break;
+            case 4:
+                printf("\nEncerrando o sistema de senhas. Ate logo!\n");
+                break;
+            default:
+ // Se escolhida uma opção diferente das opções disponíveis, volte para o menu.
+                printf("\nOpcao invalida. Por favor, escolha uma opcao entre 1 e 4.\n");
+                break;
+        }
+    } while (opcao != 4);
+
+    // Limpeza de memória ao sair (opcional, mas boa prática)
+    No* atual = head;
+    while (atual != NULL) {
+        No* proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
+    }
+    head = NULL;
+
+    return 0;
+}
+
