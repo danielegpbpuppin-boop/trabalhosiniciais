@@ -1,0 +1,38 @@
+#Apresentação
+print('Bem-vindos a loja de Daniele de G.P.B.Puppin')
+#definindo valor do pedido
+valor = float(input('Digite o valor do pedido: '))
+#definindo quantidade de parcelas
+parcelas = int(input('Digite a quantidade de parcelas: '))
+# Para parcelas menores que 4
+if (parcelas < 4):
+    #o juros é considerado nulo
+    juros = 0
+#Para parcelas maiores ou iguais à 4 e menores que 6
+elif (parcelas >= 4 and parcelas < 6):
+    #o juros é de 4%
+    juros = 0.04
+#Para parcelas maiores ou iguais à 6 e menores que 9
+elif (parcelas >= 6 and parcelas < 9):
+    #o juros é de 8%
+    juros = 0.08
+#Para parcelas maiores ou iguais à 9 e menores que 13
+elif (parcelas >= 9 and parcelas < 13):
+    #o juros é de 16%
+    juros = 0.16
+#Para parcelas maiores ou iguais à 13
+else:
+    #o juros é de 32%
+    juros = 0.32
+# Cálculo do valor da parcela 
+valor_da_parcela = ((valor)*(1+juros))/parcelas
+# Simplificação do resultado
+roanded_da_parcela = round(valor_da_parcela, 2)
+print('O valor da parcela será de: ', roanded_da_parcela)
+# Cálculo do valor total a ser pago
+valor_total_parcelado = valor_da_parcela*parcelas
+# Simplificação do resultado 
+roanded_total_parcelado = round(valor_total_parcelado, 2)
+print('O valor total a ser pago será de: ', roanded_total_parcelado)
+
+ 
