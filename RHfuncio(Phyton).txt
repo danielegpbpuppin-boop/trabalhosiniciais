@@ -1,0 +1,116 @@
+#criando lista para cadastro dos funcionários
+cadastro = []
+#criando a função 'cadastrarf'
+def cadastrarf():
+  #apresentação da função 'cadastrarf'
+    print('-'*50)
+    print('-'*17,'CADASTRAR FUNCIONÁRIO','-'*17)
+    print('')
+    #criando laço de repetição (for i in range) para gerar dados para alimentar a lista dos funcionários 
+    for i in range(4): 
+        #cadastrando o id do funcionário
+        id_funcionario = int(input('Digite o ID do funcionário: '))
+        #cadastrando o nome do funcionário
+        nome = input('Digite o nome do funcionário: ')
+        #cadastrando o setor do funcionário
+        setor = input('Digite o setor do funcionário: ')
+        #cadastrando o salário do funcionário
+        salario = float(input('Digite o salário do funcionário: '))
+        #adicionando os dados cadastrados na lista 'cadastro' em um único registro 
+        cadastro.append([id_funcionario, nome, setor, salario])
+        #mensagem de sucesso
+        print('Funcionário cadastrado com sucesso!')
+        print('-'*50)
+#criando a função 'consultar'
+def consultar():
+  #apresentando o menu da função 'consultar 
+    print('-'*50)
+    print('-'*17,'CONSULTAR FUNCIONÁRIO','-'*17)
+    print('1- Consultar todos os funcionários')
+    print('2- Consultar funcionário por ID')
+    print('3- Consultar funcionário(s) por setor')
+    print('4- Retornar')
+    #criando variável para escolha do menu 
+    op = int(input('Escolha uma opção: '))
+    #consultando todos os funcionários contidos na lista cadastro 
+    if op == 1:
+        for funcionario in cadastro:
+            print(f'ID: {funcionario[0]}, Nome: {funcionario[1]}, Setor: {funcionario[2]}, Salário: {funcionario[3]}')
+    #Consultando o funcionário pelo número do id
+    elif op == 2:
+        id_consulta = int(input('Digite o ID do funcionário que deseja consultar: '))
+        encontrado = False
+        #verificando o cadastro encontrado, mostrando a opção e parando a função
+        for funcionario in cadastro:
+            if funcionario[0] == id_consulta:
+                print(f'ID: {funcionario[0]}, Nome: {funcionario[1]}, Setor: {funcionario[2]}, Salário: {funcionario[3]}')
+                encontrado = True
+                break
+       # indicando que o funcionário não foi encontrado        
+        if not encontrado:
+            print('Funcionário não encontrado!')
+    #Consultando o funcionário pelo setor 
+    elif op == 3:
+        setor_consulta = input('Digite o setor do funcionário que deseja consultar: ')
+        encontrado = False
+        #verificando o cadastro encontrado, mostrando a opção e parando a função
+        for funcionario in cadastro:
+            if funcionario[2] == setor_consulta:
+                print(f'ID: {funcionario[0]}, Nome: {funcionario[1]}, Setor: {funcionario[2]}, Salário: {funcionario[3]}')
+                encontrado = True
+                break
+        #indicando que o funcionário não foi encontrado
+        if not encontrado:
+            print('Nenhum funcionário encontrado neste setor!')
+    #retornando ao estado inicial da função 
+    elif op == 4:
+        return
+  #indicando que a opção escolhida não é válida
+    else:
+        print('Opção inválida!')
+# criando a 'função remover'
+def remover():
+    #tornando a lista 'cadastro' com os itens globais para facilitar a remoção 
+    global cadastro
+    #solicitando o id do funcionário a ser removido
+    id_remover = int(input('Digite o ID do funcionário que deseja remover: '))
+    encontrado = False
+    #encontrado o funcionário pelo id, removendo este e parando a função 
+    for funcionario in cadastro:
+        if funcionario[0] == id_remover:
+            cadastro.remove(funcionario)
+            print('Funcionário removido com sucesso!')
+            encontrado = True
+            break
+    #indicando que o funcionário não foi encontrado
+    if not encontrado:
+        print('Funcionário não encontrado!')
+#programa principal 
+while True:
+  #apresentação do menu principal 
+    print('Bem-vindo à Empresa de Daniele de G.P.B. Puppin')
+    print('-'*50)
+    print('-'*17,'MENU PRINCIPAL','-'*17)
+    print('Escolha a opção desejada:')
+    print('1- Cadastrar Funcionário')
+    print('2- Consultar Funcionário')
+    print('3- Remover Funcionário')
+    print('4- Sair')
+    #criando variável para a possível escolha 
+    op = int(input('Escolha uma opção: '))
+    #indo para a função de cadastrar o funcionário 
+    if op == 1:
+        cadastrarf()
+    #indo para a função de consultar o funcionário
+    elif op == 2:
+        consultar()
+    #indo para a função de remover o funcionário
+    elif op == 3:
+        remover()
+    #saindo do programa e parando o programa principal 
+    elif op == 4:
+        break
+    #indicando que a opção escolhida não é válida
+    else:
+        print('Opção inválida!')
+
