@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanças Amigáveis - Memória Local</title>
+    <style>
+        :root {
+            --primary: #2D5AF0;
+            --secondary: #00C853;
+            --bg: #F0F2F5;
+            --text: #1C1E21;
+            --danger: #FF3B30;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .balance-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            display: block;
+            margin: 5px 0;
+        }
+
+        .reset-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+
+        /* Chat */
+        #chat-window {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .msg {
+            max-width: 85%;
+            padding: 15px;
+            border-radius: 18px;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .bot { align-self: flex-start; background: white; border-bottom-left-radius: 2px; }
+        .user { align-self: flex-end; background: #D1E4FF; border-bottom-right-radius: 2px; }
+
+        /* Input */
+        .controls {
+            background: white;
+            padding: 20px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #DDD;
+        }
+
+        input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #EEE;
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--primary); }
+
+        button.send-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .info-tag {
+            font-size: 0.8rem;
+            background: rgba(0,0,0,0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <button class="reset-btn" onclick="resetarDados()">Reiniciar App</button>
+    <span id="user-greeting" style="font-weight: 300;">Olá!</span>
+    <span class="balance-value" id="balance-display">R$ 0,00</span>
+    <div id="summary-info" class="info-tag">Carregando dados...</div>
+</div>
+
+<div id="chat-window">
+    </div>
+
+<div class="controls">
+    <input type="text" id="main-input" placeholder="Escreva aqui..." onkeypress="handleKey(event)">
+    <button class="send-btn" onclick="processInput()">Enviar</button>
+</div>
+
+<script>
+    // Configuração inicial e persistência
+    let state = JSON.parse(localStorage.getItem('financas_data')) || {
+        name: "",
+        income: 0,
+        expenses: 0,
+        step: 'GET_NAME',
+        history: [] // Guardamos o histórico do chat
+    };
+
+    const chatWindow = document.getElementById('chat-window');
+    const mainInput = document.getElementById('main-input');
+    const balanceDisplay = document.getElementById('balance-display');
+    const userGreeting = document.getElementById('user-greeting');
+    const summaryInfo = document.getElementById('summary-info');
+
+    function saveData() {
+        localStorage.setItem('financas_data', JSON.stringify(state));
+        updateUI();
+    }
+
+    function updateUI() {
+        const balance = state.income - state.expenses;
+        balanceDisplay.innerText = `R$ ${balance.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        userGreeting.innerText = state.name ? `Olá, ${state.name}!` : "Bem-vindo!";
+        summaryInfo.innerText = `Renda: R$ ${state.income} | Gastos: R$ ${state.expenses}`;
+    }
+
+    function addMessage(text, side, save = true) {
+        const div = document.createElement('div');
+        div.className = `msg ${side}`;
+        div.innerHTML = text;
+        chatWindow.appendChild(div);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+        
+        if (save) {
+            state.history.push({text, side});
+            saveData();
+        }
+    }
+
+    // Carregar histórico ao abrir
+    function loadHistory() {
+        if (state.history.length === 0) {
+            addMessage("Olá! Sou o seu assistente. Para começarmos, <b>qual é o seu nome?</b>", 'bot', true);
+        } else {
+            state.history.forEach(m => addMessage(m.text, m.side, false));
+        }
+        updateUI();
+    }
+
+    function processInput() {
+        const val = mainInput.value.trim();
+        if (!val) return;
+
+        addMessage(val, 'user');
+        mainInput.value = "";
+
+        setTimeout(() => {
+            if (state.step === 'GET_NAME') {
+                state.name = val;
+                state.step = 'GET_INCOME';
+                addMessage(`Prazer, ${val}! Agora, qual é o valor da sua <b>renda mensal total</b>?`, 'bot');
+            } 
+            else if (state.step === 'GET_INCOME') {
+                const num = parseFloat(val.replace(',', '.'));
+                if (isNaN(num)) {
+                    addMessage("Por favor, digite apenas o número (ex: 2500).", 'bot');
+                } else {
+                    state.income = num;
+                    state.step = 'CHAT';
+                    addMessage("Tudo pronto! Podes dizer algo como: <i>'Gastei 30 com café'</i> ou <i>'Quanto ainda tenho?'</i>", 'bot');
+                }
+            } 
+            else {
+                handleFinanceLogic(val);
+            }
+            saveData();
+        }, 600);
+    }
+
+    function handleFinanceLogic(text) {
+        const t = text.toLowerCase();
+        const numbers = text.match(/\d+([.,]\d+)?/g);
+
+        if (numbers) {
+            const value = parseFloat(numbers[0].replace(',', '.'));
+            state.expenses += value;
+            addMessage(`Anotei! Gasto de <b>R$ ${value.toFixed(2)}</b> registado.`, 'bot');
+            
+            if (state.expenses > state.income) {
+                addMessage("⚠️ <b>Atenção:</b> Os teus gastos ultrapassaram a tua renda!", 'bot');
+            }
+        } else if (t.includes("quanto") || t.includes("saldo")) {
+            const rest = state.income - state.expenses;
+            addMessage(`Ainda tens <b>R$ ${rest.toFixed(2)}</b> para gastar este mês.`, 'bot');
+        } else {
+            addMessage("Não entendi o valor. Tenta dizer 'Gastei 50'.", 'bot');
+        }
+    }
+
+    function resetarDados() {
+        if(confirm("Desejas apagar todos os dados e começar de novo?")) {
+            localStorage.removeItem('financas_data');
+            location.reload();
+        }
+    }
+
+    function handleKey(e) { if (e.key === 'Enter') processInput(); }
+
+    window.onload = loadHistory;
+</script>
+
+</body>
+</html>
